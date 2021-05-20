@@ -235,6 +235,9 @@ def main():
     DESC = "MemLoci: Prediction of protein membrane localization"
     parser = argparse.ArgumentParser(description = DESC, prog = "memloci.py")
     parser.add_argument("-i", "--i-json", help = "The input JSON file name", dest = "i_json", required = True)
+    parser.add_argument("-d", "--dbfile",
+                              help = "The PSIBLAST DB file",
+                              dest = "dbfile", required= True)
     parser.add_argument("-o", "--outf", help = "The output file", dest = "outf", required = True)
     ns = parser.parse_args()
 
@@ -257,7 +260,7 @@ def main():
         print(seq, file=fsofs)
         fsofs.close()
         seqrec = SeqIO.read(open(fastaSeq),'fasta')
-        memloci_pred = Test(seqrec, config.BLASTDB)
+        memloci_pred = Test(seqrec, ns.dbfile)
         #print(memloci_pred)
         acc_json = utils.get_json_output(i_json, memloci_pred)
         protein_jsons.append(acc_json)
