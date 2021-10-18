@@ -1,5 +1,15 @@
 from . import config
 
+
+
+def get_biopy_pssm(sequence, profile_matrix):
+    from Bio.Align import AlignInfo
+    alph = "ARNDCQEGHILKMFPSTWYV"
+    biopy_pssm = []
+    for i in range(len(sequence)):
+        biopy_pssm.append((sequence[i], {alph[j]:profile[i][j] for j in range(len(alph))}))
+    return AlignInfo.PSSM(biopy_pssm)
+
 def cut_peptide(i_json):
     peptide = [f for f in i_json['features'] if f['type'] == "SIGNAL" or f['type'] == "TRANSIT"]
     cleavage = 0

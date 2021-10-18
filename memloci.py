@@ -19,6 +19,8 @@ from SVM.SVMlike import *
 from memlocilib import config
 from memlocilib import utils
 from memlocilib import workenv
+from memlocilib import blast
+from memlocilib import cpparser
 
 class Parameters:
     def __init__(self):
@@ -182,10 +184,10 @@ def Train(fasta_file,db_profile,IDs):
 
 
 
-def Test(seqrec,align_db):
+def Test(seqrec, biopyPSSM, align_db):
     '''Test provided dataset'''
     params=Parameters()
-    EncodedSequence=Protein_encoder(seqrec,params.ALLSchemas,align_db).encoded_protein
+    EncodedSequence=Protein_encoder(seqrec,params.ALLSchemas,align_db, biopyPSSM).encoded_protein
     modpath=os.path.join(MEMLOCI_HOME, 'models')+'/'
     Dmodels={'CM':modpath+'CM_MOD','ORG':modpath+'ORG_MOD','ENDO':modpath+'ENDO_MOD',}
     Dprediction={}
@@ -251,7 +253,10 @@ def main():
         print(">%s" % seqid, file=fsofs)
         print(seq, file=fsofs)
         fsofs.close()
+        pssmFile = blast.runPsiBlast(prefix, ns.dbfile, fastaSeq, workEnv)
+        profile_matrix = cpparser.BlastCheckPointProfile(pssmFile)
         seqrec = SeqIO.read(open(fastaSeq),'fasta')
+        biopyPSSM = utils.get_biopy_pssm(str(seqrec), profile_matrix)
         memloci_pred = Test(seqrec, ns.dbfile)
         i_json = {'accession': seqid, 'comments': [], "dbReferences": []}
         i_json['sequence'] = {

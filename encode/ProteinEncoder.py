@@ -10,7 +10,7 @@ from .PSSM import PSSM
 
 class Protein_encoder:
     '''Takes a SeqRecod Object  and encode it in the requestested schemas '''
-    def __init__(self,seqrec, coding_schema,align_db):
+    def __init__(self,seqrec, coding_schema,align_db, biopyPSSM):
 
         self.seqrec=seqrec
         self.CODE=coding_schema
@@ -19,7 +19,7 @@ class Protein_encoder:
         self.encoded_protein={}
         self._gen_group()
         try:
-            self.encode()
+            self.encode(biopyPSSM)
         except:
             raise
             sys.exit()
@@ -106,19 +106,21 @@ class Protein_encoder:
 
 
 
-    def encode(self):
+    def encode(self, biopyPSSM):
 
         freq_obj=SeqEncoder.seqfreq(self.seqrec)#create sequence aminoacidic frequency calculation object
 
-        PSSM_obj=PSSM(self.seqrec)#create PSSM
-        try:
-            import multiprocessing
-            CPU = multiprocessing.cpu_count()
-        except ImportError:
-            CPU=2
+        #PSSM_obj=PSSM(self.seqrec)#create PSSM
+        #try:
+        #    import multiprocessing
+        #    CPU = multiprocessing.cpu_count()
+        #except ImportError:
+        #    CPU=2
         #speed up hack
-        PSSM_obj.build_pssm_biopy(self.align_db,nprocessors=CPU,evalue=1e-5,nalign=250)
-        prof_obj=PSSMEncoder.profreq(PSSM_obj.pssm)#create profile aminoacidic frequency calculation object
+        #PSSM_obj.build_pssm_biopy(self.align_db,nprocessors=CPU,evalue=1e-5,nalign=250)
+
+        #prof_obj=PSSMEncoder.profreq(PSSM_obj.pssm)#create profile aminoacidic frequency calculation object
+        prof_obj=PSSMEncoder.profreq(biopyPSSM)
 
         for Dcode in self.CODE:
             code=tuple(Dcode.items())
