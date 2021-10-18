@@ -100,6 +100,7 @@ class PSSM:
                             self.pssm.pssm[i][1][k]=v/tot
                     else:
                         self.pssm.pssm[i][1][k]=v
+        print(self.pssm)
         return
 
 
