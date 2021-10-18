@@ -1,6 +1,13 @@
 from . import config
 
-
+def get_data_cache(cache_dir):
+    import os
+    from . import datacache
+    ret = None
+    if cache_dir is not None:
+        if os.path.isdir(cache_dir):
+            ret = datacache.DataCache(cache_dir)
+    return ret
 
 def get_biopy_pssm(sequence, profile):
     from Bio.Align import AlignInfo

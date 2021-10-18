@@ -239,9 +239,11 @@ def main():
                               help = "The PSIBLAST DB file",
                               dest = "dbfile", required= True)
     parser.add_argument("-o", "--outf", help = "The output file", dest = "outf", required = True)
+    parser.add_argument("-c", "--cache-dir", help="Cache dir for alignemnts", dest="cache_dir", required=False, default=None)
     ns = parser.parse_args()
 
     workEnv = workenv.TemporaryEnv()
+    data_cache = utils.get_data_cache(ns.cache_dir)
     i=0
     protein_jsons = []
     for record in SeqIO.parse(ns.fasta, 'fasta'):
@@ -253,7 +255,7 @@ def main():
         print(">%s" % seqid, file=fsofs)
         print(seq, file=fsofs)
         fsofs.close()
-        pssmFile = blast.runPsiBlast(prefix, ns.dbfile, fastaSeq, workEnv)
+        pssmFile = blast.runPsiBlast(prefix, ns.dbfile, fastaSeq, workEnv, data_cache=data_cache)
         profile_matrix = cpparser.BlastCheckPointProfile(pssmFile)
         seqrec = SeqIO.read(open(fastaSeq),'fasta')
         biopyPSSM = utils.get_biopy_pssm(str(seqrec), profile_matrix)
