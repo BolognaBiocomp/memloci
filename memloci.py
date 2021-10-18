@@ -253,6 +253,11 @@ def main():
         fsofs.close()
         seqrec = SeqIO.read(open(fastaSeq),'fasta')
         memloci_pred = Test(seqrec, ns.dbfile)
+        i_json = {'accession': seqid, 'comments': [], "dbReferences": []}
+        i_json['sequence'] = {
+                            "length": len(seq),
+                            "sequence": seq
+                         }
         acc_json = utils.get_json_output(i_json, memloci_pred)
         protein_jsons.append(acc_json)
         i = i + 1
