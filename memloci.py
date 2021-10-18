@@ -257,7 +257,7 @@ def main():
         profile_matrix = cpparser.BlastCheckPointProfile(pssmFile)
         seqrec = SeqIO.read(open(fastaSeq),'fasta')
         biopyPSSM = utils.get_biopy_pssm(str(seqrec), profile_matrix)
-        memloci_pred = Test(seqrec, ns.dbfile)
+        memloci_pred = Test(seqrec, biopyPSSM, ns.dbfile)
         i_json = {'accession': seqid, 'comments': [], "dbReferences": []}
         i_json['sequence'] = {
                             "length": len(seq),
