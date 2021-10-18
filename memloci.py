@@ -229,12 +229,10 @@ def Test(seqrec,align_db):
     #print "\t".join(map(str, [seqrec.id,Lprediction[0][1],Dprediction_score,Dprediction]))
     return seqrec.id,Lprediction[0][1],Dprediction_score,Dprediction
 
-
-
 def main():
     DESC = "MemLoci: Prediction of protein membrane localization"
     parser = argparse.ArgumentParser(description = DESC, prog = "memloci.py")
-    parser.add_argument("-i", "--i-json", help = "The input JSON file name", dest = "i_json", required = True)
+    parser.add_argument("-f", "--fasta", help = "The input FASTA file name", dest = "fasta", required = True)
     parser.add_argument("-d", "--dbfile",
                               help = "The PSIBLAST DB file",
                               dest = "dbfile", required= True)
@@ -242,6 +240,28 @@ def main():
     ns = parser.parse_args()
 
     workEnv = workenv.TemporaryEnv()
+    i=0
+    protein_jsons = []
+    for record in SeqIO.parse(ns.fasta, 'fasta'):
+        seqid = record.id
+        seq = str(record.seq)
+        prefix="seq%d"%i
+        fastaSeq  = workEnv.createFile(prefix+".", ".fasta")
+        fsofs=open(fastaSeq,'w')
+        print(">%s" % seqid, file=fsofs)
+        print(seq, file=fsofs)
+        fsofs.close()
+        seqrec = SeqIO.read(open(fastaSeq),'fasta')
+        memloci_pred = Test(seqrec, ns.dbfile)
+        acc_json = utils.get_json_output(i_json, memloci_pred)
+        protein_jsons.append(acc_json)
+        i = i + 1
+    ofs=open(ns.outf, 'w')
+    json.dump(protein_jsons, ofs, indent=5)
+    ofs.close()
+    workEnv.destroy()
+
+    """
     ifs = open(ns.i_json)
     input_json = json.load(ifs)
     ifs.close()
@@ -269,7 +289,7 @@ def main():
     json.dump(protein_jsons, ofs, indent=5)
     ofs.close()
     workEnv.destroy()
-
+    """
 
 if __name__ == '__main__':
     """
