@@ -23,7 +23,7 @@ class Protein_encoder:
         except:
             raise
             sys.exit()
-
+        print(self.encoded_protein)
         return
 
 
