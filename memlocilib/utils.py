@@ -2,7 +2,7 @@ from . import config
 
 
 
-def get_biopy_pssm(sequence, profile_matrix):
+def get_biopy_pssm(sequence, profile):
     from Bio.Align import AlignInfo
     alph = "ARNDCQEGHILKMFPSTWYV"
     biopy_pssm = []
