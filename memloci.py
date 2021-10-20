@@ -240,6 +240,9 @@ def main():
                               dest = "dbfile", required= True)
     parser.add_argument("-o", "--outf", help = "The output file", dest = "outf", required = True)
     parser.add_argument("-c", "--cache-dir", help="Cache dir for alignemnts", dest="cache_dir", required=False, default=None)
+    parser.add_argument("-j", "--psiblast-iter", help="Number of PSIBLAST iterations (default 3)", dest="pbniter", required=False, default=3, type=int)
+    parser.add_argument("-n", "--psiblast-nalign", help="PSIBLAST num_alignments parameter (default 5000)", dest="pbnalign", required=False, default=5000, type=int)
+    parser.add_argument("-e", "--psiblast-evalue", help="PSIBLAST evalue parameter (default 0.001)", dest="pbeval", required=False, default=0.001, type=float)
     ns = parser.parse_args()
 
     workEnv = workenv.TemporaryEnv()
@@ -255,7 +258,8 @@ def main():
         print(">%s" % seqid, file=fsofs)
         print(seq, file=fsofs)
         fsofs.close()
-        pssmFile = blast.runPsiBlast(prefix, ns.dbfile, fastaSeq, workEnv, data_cache=data_cache)
+        pssmFile = blast.runPsiBlast(prefix, ns.dbfile, fastaSeq, workEnv, data_cache=data_cache,
+                                     num_alignments=ns.pdnalign, num_iterations=ns.pbniter, evalue=ns.pbeval)
         profile_matrix = cpparser.BlastCheckPointProfile(pssmFile)
         seqrec = SeqIO.read(open(fastaSeq),'fasta')
         biopyPSSM = utils.get_biopy_pssm(str(seqrec), profile_matrix)
