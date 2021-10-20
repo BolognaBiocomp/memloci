@@ -261,7 +261,7 @@ def main():
         print(seq, file=fsofs)
         fsofs.close()
         pssmFile = blast.runPsiBlast(prefix, ns.dbfile, fastaSeq, workEnv, data_cache=data_cache,
-                                     num_alignments=ns.pdnalign, num_iterations=ns.pbniter, evalue=ns.pbeval)
+                                     num_alignments=ns.pbnalign, num_iterations=ns.pbniter, evalue=ns.pbeval)
         profile_matrix = cpparser.BlastCheckPointProfile(pssmFile)
         seqrec = SeqIO.read(open(fastaSeq),'fasta')
         biopyPSSM = utils.get_biopy_pssm(str(seqrec), profile_matrix)
