@@ -26,6 +26,13 @@ def cut_peptide(i_json):
         sequence = i_json['sequence']['sequence'][cleavage:]
     return sequence, cleavage
 
+def write_gff_output(acc, sequence, output_file, localization, prob):
+    l = len(sequence)
+    go_info = config.GOINFO[localization]
+    print(acc, "MemLoci", go_info["uniprot"], 1, l, prob, ".", ".",
+    "Ontology_term=%s;evidence=ECO:0000256" % go_info['goid'],
+    file = output_file, sep = "\t")
+
 def get_json_output(i_json, memloci_pred):
     loc = memloci_pred[1]
     score = float(memloci_pred[2][loc][:-1])/100.0

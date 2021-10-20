@@ -239,6 +239,7 @@ def main():
                               help = "The PSIBLAST DB file",
                               dest = "dbfile", required= True)
     parser.add_argument("-o", "--outf", help = "The output file", dest = "outf", required = True)
+    parser.add_argument("-m", "--outfmt", help = "The output format: json or gff3 (default)", choices=['json', 'gff3'], required = False, default = "gff3")
     parser.add_argument("-c", "--cache-dir", help="Cache dir for alignemnts", dest="cache_dir", required=False, default=None)
     parser.add_argument("-j", "--psiblast-iter", help="Number of PSIBLAST iterations (default 3)", dest="pbniter", required=False, default=3, type=int)
     parser.add_argument("-n", "--psiblast-nalign", help="PSIBLAST num_alignments parameter (default 5000)", dest="pbnalign", required=False, default=5000, type=int)
@@ -249,6 +250,7 @@ def main():
     data_cache = utils.get_data_cache(ns.cache_dir)
     i=0
     protein_jsons = []
+    ofs=open(ns.outf, 'w')
     for record in SeqIO.parse(ns.fasta, 'fasta'):
         seqid = record.id
         seq = str(record.seq)
@@ -264,16 +266,21 @@ def main():
         seqrec = SeqIO.read(open(fastaSeq),'fasta')
         biopyPSSM = utils.get_biopy_pssm(str(seqrec), profile_matrix)
         memloci_pred = Test(seqrec, biopyPSSM, ns.dbfile)
-        i_json = {'accession': seqid, 'comments': [], "dbReferences": []}
-        i_json['sequence'] = {
-                            "length": len(seq),
-                            "sequence": seq
-                         }
-        acc_json = utils.get_json_output(i_json, memloci_pred)
-        protein_jsons.append(acc_json)
+        if ns.outfmt == "gff3":
+            loc = memloci_pred[1]
+            score = float(memloci_pred[2][loc][:-1])/100.0
+            utils.write_gff_output(seqid, seq, ofs, )
+        else:
+            i_json = {'accession': seqid, 'comments': [], "dbReferences": []}
+            i_json['sequence'] = {
+                                "length": len(seq),
+                                "sequence": seq
+                             }
+            acc_json = utils.get_json_output(i_json, memloci_pred)
+            protein_jsons.append(acc_json)
         i = i + 1
-    ofs=open(ns.outf, 'w')
-    json.dump(protein_jsons, ofs, indent=5)
+    if ns.outfmt == "json":
+        json.dump(protein_jsons, ofs, indent=5)
     ofs.close()
     workEnv.destroy()
 
