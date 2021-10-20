@@ -269,7 +269,7 @@ def main():
         if ns.outfmt == "gff3":
             loc = memloci_pred[1]
             score = float(memloci_pred[2][loc][:-1])/100.0
-            utils.write_gff_output(seqid, seq, ofs, )
+            utils.write_gff_output(seqid, seq, ofs, loc, score)
         else:
             i_json = {'accession': seqid, 'comments': [], "dbReferences": []}
             i_json['sequence'] = {
