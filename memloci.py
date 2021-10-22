@@ -246,12 +246,12 @@ def main():
     parser.add_argument("-e", "--psiblast-evalue", help="PSIBLAST evalue parameter (default 0.001)", dest="pbeval", required=False, default=0.001, type=float)
     ns = parser.parse_args()
 
-    workEnv = workenv.TemporaryEnv()
     data_cache = utils.get_data_cache(ns.cache_dir)
     i=0
     protein_jsons = []
     ofs=open(ns.outf, 'w')
     for record in SeqIO.parse(ns.fasta, 'fasta'):
+        workEnv = workenv.TemporaryEnv()
         seqid = record.id
         seq = str(record.seq)
         prefix="seq%d"%i
@@ -279,10 +279,10 @@ def main():
             acc_json = utils.get_json_output(i_json, memloci_pred)
             protein_jsons.append(acc_json)
         i = i + 1
+        workEnv.destroy()
     if ns.outfmt == "json":
         json.dump(protein_jsons, ofs, indent=5)
     ofs.close()
-    workEnv.destroy()
 
     """
     ifs = open(ns.i_json)
