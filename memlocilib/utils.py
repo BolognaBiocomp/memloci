@@ -1,4 +1,15 @@
 from . import config
+import numpy
+
+def one_hot_encoding(sequence, alph="ARNDCQEGHILKMFPSTWYV"):
+    profile = numpy.zeros((len(sequence), 20))
+    for (i, aa) in enumerate(sequence):
+        try:
+            j = alph.index(aa)
+            profile[i,j] = 1.0
+        except:
+            pass
+    return profile
 
 def get_data_cache(cache_dir):
     import os
