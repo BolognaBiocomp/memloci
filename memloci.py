@@ -269,7 +269,7 @@ def main():
         except:
             profile_matrix = utils.one_hot_encoding(seq)
         seqrec = SeqIO.read(open(fastaSeq),'fasta')
-        biopyPSSM = utils.get_biopy_pssm(str(seqrec), profile_matrix)
+        biopyPSSM = utils.get_biopy_pssm(str(seqrec.seq), profile_matrix)
         memloci_pred = Test(seqrec, biopyPSSM, ns.dbfile)
         if ns.outfmt == "gff3":
             loc = memloci_pred[1]
